@@ -7,6 +7,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         index: true
     },
+    picture: {
+        type: String,
+        default: null
+    },
     role: {
         type: String,
         default: 'subscriber'

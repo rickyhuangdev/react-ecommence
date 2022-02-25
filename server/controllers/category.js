@@ -1,45 +1,45 @@
-const Category = require('../models/category')
-const slugify = require('slugify')
+const Category = require("../models/category");
+const slugify = require("slugify");
+
 exports.create = async (req, res) => {
     try {
-        const {name} = req.body
-        const category = await new Category({name, slug: slugify(name)}).save()
-        res.json(category)
-    } catch (e) {
-        res.status(400).json(e)
+        const { name } = req.body;
+        // const category = await new Category({ name, slug: slugify(name) }).save();
+        // res.json(category);
+        res.json(await new Category({ name, slug: slugify(name) }).save());
+    } catch (err) {
+         console.log(err);
+        res.status(400).json(err);
     }
-}
-exports.list = async (req, res) => {
-    try {
-        const category = await Category.find({}).sort({createdAt: -1}).exec()
-        res.json(category)
-    } catch (e) {
-        res.status(400).json(e)
-    }
-}
+};
+
+exports.list = async (req, res) =>
+    res.json(await Category.find({}).sort({ createdAt: -1 }).exec());
+
 exports.read = async (req, res) => {
-    try {
-        const slug = req.params.slug
-        const category = await Category.findOne({slug}).exec()
-        res.json(category)
-    } catch (e) {
-        res.status(400).json(e)
-    }
-}
+    let category = await Category.findOne({ slug: req.params.slug }).exec();
+    res.json(category);
+};
+
 exports.update = async (req, res) => {
+    const { name } = req.body;
     try {
-        const {name} = req.body
-        const category = Category.findByIdAndUpdate({slug: req.params.slug}, {name, slug: slugify(name)})
-        res.json(category)
-    } catch (e) {
-        res.status().json(e)
+        const updated = await Category.findOneAndUpdate(
+            { slug: req.params.slug },
+            { name, slug: slugify(name) },
+            { new: true }
+        );
+        res.json(updated);
+    } catch (err) {
+        res.status(400).send("Create update failed");
     }
-}
+};
+
 exports.remove = async (req, res) => {
     try {
-        const category = await Category.findOneAndDelete({slug: req.params.slug})
-        res.json(category)
-    } catch (e) {
-        res.status().json(e)
+        const deleted = await Category.findOneAndDelete({ slug: req.params.slug });
+        res.json(deleted);
+    } catch (err) {
+        res.status(400).send("Create delete failed");
     }
-}
+};

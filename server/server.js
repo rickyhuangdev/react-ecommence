@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 require('dotenv').config()
 const app = express()
-const fs = require('fs')
+const { readdirSync } = require("fs");
 //DB
 mongoose.connect(process.env.MONGO_URI, {}).then(() => console.log("DB connected"))
     .catch((err) => console.log("DB Error => ", err));
@@ -17,7 +17,7 @@ app.use(cors())
 //port
 const port = process.env.PORT || 3001
 //route middleware
-fs.readdirSync('./routes').map((route) => app.use("/api", require("./routes/" + route)))
+readdirSync("./routes").map((r) => app.use("/api", require("./routes/" + r)));
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })

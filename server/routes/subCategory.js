@@ -14,8 +14,8 @@ const {
 } = require("../controllers/subCategory");
 
 // routes
-router.post("/sub", authCheck, adminCheck, create);
-router.get("/subCategory", list);
+router.post("/subCategory", authCheck, adminCheck, create);
+router.get("/subCategories", list);
 router.get("/subCategory/:slug", read);
 router.put("/subCategory/:slug", authCheck, adminCheck, update);
 router.delete("/subCategory/:slug", authCheck, adminCheck, remove);

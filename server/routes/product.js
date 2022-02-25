@@ -11,7 +11,7 @@ const {
     // update,
     // remove,
     // list,
-} = require("../controllers/category");
+} = require("../controllers/product");
 
 // routes
 router.post("/product", authCheck, adminCheck, create);

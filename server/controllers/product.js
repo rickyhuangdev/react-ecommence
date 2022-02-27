@@ -32,11 +32,11 @@ exports.listAll = async (req, res) => {
 //     }
 // };
 //
-// exports.remove = async (req, res) => {
-//     try {
-//         const deleted = await Category.findOneAndDelete({ slug: req.params.slug });
-//         res.json(deleted);
-//     } catch (err) {
-//         res.status(400).send("Create delete failed");
-//     }
-// };
+exports.remove = async (req, res) => {
+    try {
+        const deleted = await Product.findOneAndDelete({ slug: req.params.slug });
+        res.json(deleted);
+    } catch (err) {
+        res.status(400).send("Create delete failed");
+    }
+};

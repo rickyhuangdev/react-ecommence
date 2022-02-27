@@ -10,12 +10,12 @@ const {
      read,
     // update,
     // remove,
-     list,
+    listAll,
 } = require("../controllers/product");
 
 // routes
 router.post("/product", authCheck, adminCheck, create);
-router.get("/products", list);
+router.get("/products/:count", listAll);
 // router.get("/category/:slug", read);
 // router.put("/category/:slug", authCheck, adminCheck, update);
 // router.delete("/category/:slug", authCheck, adminCheck, remove);

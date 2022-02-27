@@ -8,7 +8,10 @@ cloudinary.config({
 exports.upload = async (req, res) => {
     await cloudinary.uploader.upload(req.body.image, function (error, result) {
         if (result) {
-            return res.json(result)
+            res.json({
+                url: result.url,
+                public_id: result.public_id
+            })
         } else {
             return res.json(error)
         }
@@ -19,8 +22,11 @@ exports.upload = async (req, res) => {
 exports.remove = (req, res) => {
     let image_id = req.body.public_id
     cloudinary.uploader.destroy(image_id, (err, result) => {
-        if (err) return res.json({success:false,err})
-        res.json(result)
+        if (err) return res.json({success: false, err})
+        res.json({
+            url: result.url,
+            public_id: result.public_id
+        })
     })
 }
 

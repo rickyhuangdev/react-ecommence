@@ -47,3 +47,12 @@ exports.remove = async (req, res) => {
         res.status(400).send("Create delete failed");
     }
 };
+
+exports.list = async (req, res) => {
+    try {
+        const {sort, order, limit} = req.body
+        res.json(await Product.find({}).populate('category').populate('subs').sort([[sort,order]]).limit(limit).exec());
+    } catch (err) {
+        res.status(400).send(err);
+    }
+};

@@ -12,6 +12,7 @@ const {
      remove,
     listAll,
     list,
+    productStar
 } = require("../controllers/product");
 
 // routes
@@ -22,5 +23,6 @@ router.get("/product/:slug", read);
 router.put("/product/:slug", authCheck, adminCheck, update);
 router.delete("/product/:slug", authCheck, adminCheck, remove);
 router.post("/products", list);
+router.put('products/star/:productId',authCheck,productStar)
 
 module.exports = router;

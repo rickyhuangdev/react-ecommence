@@ -1,4 +1,5 @@
 const Product = require("../models/products");
+const User = require("../models/user");
 const slugify = require("slugify");
 
 exports.create = async (req, res) => {
@@ -51,8 +52,39 @@ exports.remove = async (req, res) => {
 exports.list = async (req, res) => {
     try {
         const {sort, order, limit} = req.body
-        res.json(await Product.find({}).populate('category').populate('subs').sort([[sort,order]]).limit(limit).exec());
+        res.json(await Product.find({}).populate('category').populate('subs').sort([[sort, order]]).limit(limit).exec());
     } catch (err) {
         res.status(400).send(err);
     }
 };
+exports.productStar = async (req, res) => {
+    try {
+        const product = await Product.findById({_id: req.params.id}).exec()
+        const user = await User.findOne({email: req.user.email}).exec()
+        const {star} = req.body
+        let existingRatingObject = product.ratings.find((item) => item.postedBy.toString() === user._id.toString())
+        if (existingRatingObject === 'undefined') {
+            let ratingAdded = await Product.findOneAndUpdate(product._id, {
+                $push: {ratings: {star, postedBy: user._id}}
+            }, {new: true}).exec()
+            console.log("rating added")
+            res.json(ratingAdded)
+        } else {
+            let ratingUpdated = await Product.updateOne(
+                {
+                    ratings: {$elemMatch: existingRatingObject}
+                }, {$set: {"ratings.$.star": star}}, {
+                    new: true
+                }
+            ).exec()
+            console.log("rating Updated")
+            res.json(ratingUpdated)
+        }
+
+    } catch
+        (err) {
+        res.status(400).send(err);
+    }
+}
+;
+

@@ -12,7 +12,8 @@ const {
      remove,
     listAll,
     list,
-    productStar
+    productStar,
+    listRelated
 } = require("../controllers/product");
 
 // routes
@@ -23,6 +24,7 @@ router.get("/product/:slug", read);
 router.put("/product/:slug", authCheck, adminCheck, update);
 router.delete("/product/:slug", authCheck, adminCheck, remove);
 router.post("/products", list);
-router.put('products/star/:productId',authCheck,productStar)
+router.put('/product/star/:productId',authCheck,productStar)
+router.get('/product/related/:productId',listRelated)
 
 module.exports = router;

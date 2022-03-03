@@ -11,6 +11,7 @@ const {
     update,
     remove,
     list,
+    applyCoupon
 } = require("../controllers/coupon");
 
 // routes
@@ -18,6 +19,7 @@ router.post("/coupon", authCheck, adminCheck, create);
 router.get("/coupons", list);
 router.get("/coupon/:couponId", read);
 router.put("/coupon/:couponId", authCheck, adminCheck, update);
+router.post("/user/cart/coupon", authCheck, applyCoupon);
 router.delete("/coupon/:couponId", authCheck, adminCheck, remove);
 
 module.exports = router;

@@ -13,7 +13,10 @@ const categorySchema = new Schema({
         type: String, unique: true, lowercase: true, index: true
     }, state: {
         type: Number, default: 1
-    }
+    },
+    image: {
+        type: String, unique: true, default: null
+    },
 }, {timestamps: true})
 
 module.exports = mongoose.model("Category", categorySchema)

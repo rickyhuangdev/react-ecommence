@@ -1,13 +1,12 @@
 const Category = require("../models/category");
+const Product = require("../models/products");
 const subCategory = require("../models/subCategory");
 const slugify = require("slugify");
 
 exports.create = async (req, res) => {
     try {
-        const { name } = req.body;
-        // const category = await new Category({ name, slug: slugify(name) }).save();
-        // res.json(category);
-        res.json(await new Category({ name, slug: slugify(name) }).save());
+        const {name, image} = req.body.values;
+        res.json(await new Category({name, slug: slugify(name), image}).save());
     } catch (err) {
          console.log(err);
         res.status(400).json(err);
@@ -18,17 +17,18 @@ exports.list = async (req, res) =>
     res.json(await Category.find({}).sort({ createdAt: -1 }).exec());
 
 exports.read = async (req, res) => {
-    let category = await Category.findOne({ slug: req.params.slug }).exec();
-    res.json(category);
+    let category = await Category.findOne({slug: req.params.slug}).exec();
+    const products = await Product.find({category}).populate('category').exec()
+    res.json({category,products});
 };
 
 exports.update = async (req, res) => {
-    const { name,state } = req.body;
+    const {name, image, state} = req.body.values;
     try {
         const updated = await Category.findOneAndUpdate(
-            { slug: req.params.slug },
-            { name, slug: slugify(name),state },
-            { new: true }
+            {slug: req.params.slug},
+            {name, slug: slugify(name), state, image},
+            {new: true}
         );
         res.json(updated);
     } catch (err) {

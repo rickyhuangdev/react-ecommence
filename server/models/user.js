@@ -19,7 +19,19 @@ const userSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
-    address: String,
+    address: [
+        {
+            country: String,
+            firstName: String,
+            lastName: String,
+            companyName: String,
+            address: String,
+            postCode: String,
+            email: String,
+            phone: String
+
+        }
+    ],
     // wishList: [
     //     {
     //         type: ObjectId,

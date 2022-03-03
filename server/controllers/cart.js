@@ -43,5 +43,16 @@ exports.getUserCart = async (req, res) => {
     const {products, cartTotal, totalAfterDiscount} = carts
     if (carts) {
         res.json({products, cartTotal, totalAfterDiscount})
+    }else{
+        res.json([])
+    }
+}
+exports.clearCart = async (req, res) => {
+    const user = await User.findOne(({email: req.user.email})).exec()
+    let result = await Cart.deleteOne({orderedBy: user._id}).exec()
+    if (result) {
+        res.json({
+            success: true
+        })
     }
 }

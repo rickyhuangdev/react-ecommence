@@ -1,35 +1,37 @@
-const Product = require("../models/products");
+const expressAsyncHandler = require("express-async-handler");
+const ProductModel = require("../models/productModel");
 const User = require("../models/user");
 const slugify = require("slugify");
 
-exports.create = async (req, res) => {
+exports.create = expressAsyncHandler(async (req, res) => {
     try {
-       req.body.slug = slugify(req.body.title)
-        res.json(await new Product(req.body).save());
+        req.body.slug = slugify(req.body.title)
+        res.json(await new ProductModel(req.body).save());
     } catch (err) {
         res.status(400).json(err);
     }
-};
+});
 
-exports.list = async (req, res) =>
-    res.json(await Product.find({}).sort({ createdAt: -1 }).exec());
+exports.list = expressAsyncHandler(async (req, res) =>
+    res.json(await ProductModel.find({}).sort({createdAt: -1}).exec()));
 
-exports.listAll = async (req, res) => {
-    const products = await Product.find({}).limit(parseInt(req.params.count)).populate('category').populate('subs').sort([['createdAt', "desc"]]).exec()
+exports.listAll = expressAsyncHandler(async (req, res) => {
+    console.log(123)
+    const products = await ProductModel.find({}).limit(parseInt(req.params.count)).populate('category').populate('subs').sort([['createdAt', "desc"]]).exec()
     res.json(products);
-};
-exports.read = async (req, res) => {
-    const product = await Product.findOne({slug: req.params.slug})
+});
+exports.getProductById = expressAsyncHandler(async (req, res) => {
+    const product = await ProductModel.findOne({slug: req.params.slug})
         .populate("category")
         .populate("subs")
         .exec();
     res.json(product);
-};
+});
 
 exports.update = async (req, res) => {
     req.body.slug = slugify(req.body.title);
     try {
-        const updated = await Product.findOneAndUpdate(
+        const updated = await ProductModel.findOneAndUpdate(
             {slug: req.params.slug},
             req.body,
             {new: true}
@@ -42,7 +44,7 @@ exports.update = async (req, res) => {
 
 exports.remove = async (req, res) => {
     try {
-        const deleted = await Product.findOneAndDelete({_id: req.params.id});
+        const deleted = await ProductModel.findOneAndDelete({_id: req.params.id});
         res.json(deleted);
     } catch (err) {
         res.status(400).send("Create delete failed");
@@ -52,15 +54,15 @@ exports.remove = async (req, res) => {
 exports.list = async (req, res) => {
     try {
         const {sort, order, limit} = req.body
-        res.json(await Product.find({}).populate('category').populate('subs').sort([[sort, order]]).limit(limit).exec());
+        res.json(await ProductModel.find({}).populate('category').populate('subs').sort([[sort, order]]).limit(limit).exec());
     } catch (err) {
         res.status(400).send(err);
     }
 };
 exports.productStar = async (req, res) => {
-    const product = await Product.findById(req.params.productId).exec();
-    const user = await User.findOne({ email: req.user.email }).exec();
-    const { star } = req.body;
+    const product = await ProductModel.findById(req.params.productId).exec();
+    const user = await User.findOne({email: req.user.email}).exec();
+    const {star} = req.body;
 
     // who is updating?
     // check if currently logged in user have already added rating to this product?
@@ -70,23 +72,23 @@ exports.productStar = async (req, res) => {
 
     // if user haven't left rating yet, push it
     if (existingRatingObject === undefined) {
-        let ratingAdded = await Product.findByIdAndUpdate(
+        let ratingAdded = await ProductModel.findByIdAndUpdate(
             product._id,
             {
-                $push: { ratings: { star, postedBy: user._id } },
+                $push: {ratings: {star, postedBy: user._id}},
             },
-            { new: true }
+            {new: true}
         ).exec();
         console.log("ratingAdded", ratingAdded);
         res.json(ratingAdded);
     } else {
         // if user have already left rating, update it
-        const ratingUpdated = await Product.updateOne(
+        const ratingUpdated = await ProductModel.updateOne(
             {
-                ratings: { $elemMatch: existingRatingObject },
+                ratings: {$elemMatch: existingRatingObject},
             },
-            { $set: { "ratings.$.star": star } },
-            { new: true }
+            {$set: {"ratings.$.star": star}},
+            {new: true}
         ).exec();
         console.log("ratingUpdated", ratingUpdated);
         res.json(ratingUpdated);
@@ -95,10 +97,10 @@ exports.productStar = async (req, res) => {
 
 
 exports.listRelated = async (req, res) => {
-    const product = await Product.findById(req.params.productId).exec();
+    const product = await ProductModel.findById(req.params.productId).exec();
 
-    const related = await Product.find({
-        _id: { $ne: product._id },
+    const related = await ProductModel.find({
+        _id: {$ne: product._id},
         category: product.category,
     })
         .limit(3)

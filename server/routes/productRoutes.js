@@ -7,19 +7,19 @@ const { authCheck, adminCheck } = require("../middlewares/auth");
 // controller
 const {
     create,
-     read,
-     update,
-     remove,
+    getProductById,
+    update,
+    remove,
     listAll,
     list,
     productStar,
     listRelated
-} = require("../controllers/product");
+} = require("../controllers/productController");
 
 // routes
 router.post("/product", authCheck, adminCheck, create);
-router.get("/products/:count", listAll);
-router.get("/product/:slug", read);
+router.route("/products/:count").get(listAll);
+router.get("/product/:slug", getProductById);
 // router.get("/category/:slug", read);
 router.put("/product/:slug", authCheck, adminCheck, update);
 router.delete("/product/:slug", authCheck, adminCheck, remove);

@@ -46,10 +46,10 @@ exports.remove = async (req, res) => {
 
 exports.applyCoupon = async (req, res) => {
     const {coupon} = req.body
-    console.log(coupon)
+
     const validCoupon = await Coupon.findOne({name: coupon}).exec()
     if (validCoupon === null) {
-        res.json({
+        return res.json({
             success: false,
             message: "Invalid coupon"
         })
@@ -62,10 +62,10 @@ exports.applyCoupon = async (req, res) => {
     console.log(validCoupon)
     let totalAfterDiscount = (cartTotal - (cartTotal * validCoupon.discount) / 100).toFixed(2)
    await Cart.findOneAndUpdate({orderedBy: user._id}, {totalAfterDiscount}, {new: true}).exec()
-    res.json({
-        success: false,
+    return res.json({
+        success: true,
         message: "successfully Applied",
-        data:totalAfterDiscount
+        data: totalAfterDiscount
     })
 }
 

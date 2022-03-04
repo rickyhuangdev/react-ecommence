@@ -8,12 +8,14 @@ const {authCheck, protect} = require("../middlewares/authMiddleware");
 const {
     authUser,
     saveAddress,
-    getUserProfile
+    getUserProfile,
+    registerNewUser
 } = require("../controllers/userController");
 
 // routes
 router.post("/user/address", authCheck, saveAddress);
 router.post("/login", authUser);
+router.post("/user", registerNewUser);
 router.get("/user/profile", authCheck, getUserProfile);
 
 

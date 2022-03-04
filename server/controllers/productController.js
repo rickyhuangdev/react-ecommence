@@ -1,6 +1,6 @@
 const expressAsyncHandler = require("express-async-handler");
 const ProductModel = require("../models/productModel");
-const User = require("../models/user");
+const User = require("../models/userModel");
 const slugify = require("slugify");
 
 exports.create = expressAsyncHandler(async (req, res) => {

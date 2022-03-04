@@ -1,7 +1,16 @@
 const mongoose = require('mongoose')
 const {ObjectId} = mongoose.Schema
+const bcrypt = require('bcryptjs')
 const userSchema = new mongoose.Schema({
-    name: String,
+    name: {
+        type: String,
+        required: true,
+        index: true
+    },
+    password: {
+        type: String,
+        required: true,
+    },
     email: {
         type: String,
         required: true,
@@ -32,6 +41,10 @@ const userSchema = new mongoose.Schema({
 
         }
     ],
+    isAdmin: {
+        type: Boolean,
+        default: false
+    }
     // wishList: [
     //     {
     //         type: ObjectId,
@@ -39,5 +52,9 @@ const userSchema = new mongoose.Schema({
     //     }
     // ]
 }, {timestamps: true})
+
+userSchema.methods.comparePassword = async function(enterPassword){
+    return await bcrypt.compare(enterPassword, this.password);
+}
 
 module.exports = mongoose.model('User', userSchema)

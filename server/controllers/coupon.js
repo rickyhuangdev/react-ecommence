@@ -1,5 +1,5 @@
 const Coupon = require("../models/coupon");
-const User = require("../models/user");
+const User = require("../models/userModel");
 const Cart = require("../models/cart");
 
 exports.create = async (req, res) => {

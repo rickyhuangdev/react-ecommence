@@ -10,6 +10,7 @@ const {readdirSync} = require("fs");
 mongoose.connect(process.env.MONGO_URI, {}).then(() => console.log("DB connected"))
     .catch((err) => console.log("DB Error => ", err));
 //middleware
+app.use(express.json())
 app.use(morgan("dev"))
 app.use(bodyParser.json({limit: "5mb"}))
 app.use(cors())

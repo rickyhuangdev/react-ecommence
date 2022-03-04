@@ -6,11 +6,13 @@ const {authCheck} = require("../middlewares/auth");
 
 // controller
 const {
+    authUser,
     saveAddress
-} = require("../controllers/user");
+} = require("../controllers/userController");
 
 // routes
 router.post("/user/address", authCheck, saveAddress);
+router.post("/login", authUser);
 
 
 module.exports = router;

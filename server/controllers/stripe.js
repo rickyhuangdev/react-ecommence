@@ -1,5 +1,5 @@
 const Coupon = require("../models/coupon");
-const User = require("../models/user");
+const User = require("../models/userModel");
 const Cart = require("../models/cart");
 const Product = require("../models/productModel");
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KET)

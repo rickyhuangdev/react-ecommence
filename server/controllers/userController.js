@@ -1,5 +1,7 @@
 const User = require("../models/userModel");
 const expressAsyncHandler = require("express-async-handler");
+const generateToken  = require("../utils/generateToken")
+const bcrypt = require('bcryptjs')
 exports.saveAddress = async (req, res) => {
     const userAddress = await User.findOneAndUpdate({email: req.user.email}, {address: req.body.address}).exec()
     if (userAddress) {
@@ -10,7 +12,7 @@ exports.saveAddress = async (req, res) => {
 }
 
 exports.authUser = expressAsyncHandler(async (req, res) => {
-    const {email, password} = req.body
+    let {email, password} = req.body
     const user = await User.findOne({email}).exec()
     if (user && (await user.comparePassword(password))) {
         res.json({
@@ -18,7 +20,7 @@ exports.authUser = expressAsyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
-            token: null
+            token: generateToken(user._id)
         })
     } else {
         res.status(401)

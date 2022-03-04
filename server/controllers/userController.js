@@ -1,7 +1,6 @@
 const User = require("../models/userModel");
 const expressAsyncHandler = require("express-async-handler");
 const generateToken  = require("../utils/generateToken")
-const bcrypt = require('bcryptjs')
 exports.saveAddress = async (req, res) => {
     const userAddress = await User.findOneAndUpdate({email: req.user.email}, {address: req.body.address}).exec()
     if (userAddress) {
@@ -25,6 +24,22 @@ exports.authUser = expressAsyncHandler(async (req, res) => {
     } else {
         res.status(401)
         throw new Error('Invalid email or password')
+    }
+
+})
+exports.getUserProfile = expressAsyncHandler(async (req, res) => {
+
+    const user = await User.findById(req.user._id)
+    if (user) {
+        res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            isAdmin: user.isAdmin,
+        })
+    } else {
+        res.status(401)
+        throw new Error('User not found')
     }
 
 })

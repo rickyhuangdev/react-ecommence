@@ -13,6 +13,7 @@ exports.saveAddress = async (req, res) => {
 exports.authUser = expressAsyncHandler(async (req, res) => {
     let {email, password} = req.body
     const user = await User.findOne({email}).exec()
+
     if (user && (await user.comparePassword(password))) {
         res.json({
             _id: user._id,
@@ -36,6 +37,30 @@ exports.getUserProfile = expressAsyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+        })
+    } else {
+        res.status(401)
+        throw new Error('User not found')
+    }
+
+})
+exports.updateUserProfile = expressAsyncHandler(async (req, res) => {
+
+    const user = await User.findById(req.user._id)
+
+    if (user) {
+        user.name = req.body.name || user.name
+        user.email = req.body.email || user.email
+        if(req.body.password){
+            user.password = req.body.password
+        }
+        const updatedUser = await user.save()
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+            token: generateToken(updatedUser._id)
         })
     } else {
         res.status(401)

@@ -6,21 +6,29 @@ const Coupon = require("../models/coupon");
 const expressAsyncHandler = require("express-async-handler");
 
 exports.create = expressAsyncHandler(async (req, res) => {
-    const {address} = req.body
-    const user = await User.findOne({email: req.user.email}).exec()
+    const {country,email,phone,firstName,lastName,companyName,postCode,address} = req.body.address
+    const user = await User.findById(req.user._id).exec()
     const {cartTotal, totalAfterDiscount, products, orderedBy} = await Cart.findOne({orderedBy: user._id}).exec();
     let newOrder = await new Order({
         cartTotal,
         totalAfterDiscount,
         products,
         orderedBy,
-        address
+        address:{
+            country,
+            email,
+            phone,
+            firstName,
+            lastName,
+            companyName,
+            postCode,
+            address
+        }
     }).save()
     return res.json({
         success: true,
-        data: {
-            orderId: newOrder._id
-        }
+        data: newOrder
+
     })
 
 

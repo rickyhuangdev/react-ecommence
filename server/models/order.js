@@ -16,11 +16,11 @@ const orderSchema = new Schema({
     ],
     cartTotal: Number,
     totalAfterDiscount: Number,
+    paidAt: Date,
     isPaid: {
-        type: Number,
-        default: 0
+        type: Boolean,
+        default: false
     },
-    paidDate: Date,
     orderedBy: {
         type: Schema.ObjectId,
         ref: "User"
@@ -34,7 +34,7 @@ const orderSchema = new Schema({
         phone: String,
         address: String,
     },
-    paymentIntent:{
+    paymentResult:{
 
     },
     orderStatus:{

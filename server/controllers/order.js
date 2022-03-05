@@ -36,7 +36,7 @@ exports.create = expressAsyncHandler(async (req, res) => {
 exports.getOrderDetail = expressAsyncHandler(async (req, res) => {
 
     try {
-        const order = await Order.findById(req.params.orderId).populate('products.product', "_id title price totalAfterDiscount images").exec()
+        const order = await Order.findById(req.params.orderId).populate('products.product', "_id title price totalAfterDiscount images slug").exec()
         if (order) {
             if (order.orderedBy.toString() === req.user._id.toString()) {
                 return res.json({
@@ -59,19 +59,25 @@ exports.getOrderDetail = expressAsyncHandler(async (req, res) => {
 
 
 })
-exports.updateOrderStatus = expressAsyncHandler(async (req, res) => {
-    const user = await User.findOne({email: req.user.email}, {}).exec()
+exports.updateOrderToPaid = expressAsyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.orderId)
     const result = await Cart.findByIdAndUpdate(req.params.orderId).exec();
-    // let newOrder = await  new Order({
-    //     cartTotal,
-    //     totalAfterDiscount,
-    //     products,
-    //     orderedBy,
-    //     address
-    // }).save()
-    return res.json({
-        success: true
-    })
+   if(order){
+       order.isPaid = true
+       order.paidAt = Date.now()
+       order.paymentResult = {
+           id:req.body.id,
+           status:req.body.status,
+           update_time:req.body.update_time,
+           email_address:req.body.payer.email_address
+       }
+       const updatedOrder = await order.save()
+       res.json(updatedOrder)
+   }else{
+       res.status(404)
+       throw  new Error('No Order Found')
+   }
+
 
 
 })

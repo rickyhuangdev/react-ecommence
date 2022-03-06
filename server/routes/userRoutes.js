@@ -11,7 +11,10 @@ const {
     getUserProfile,
     registerNewUser,
     updateUserProfile,
-    getUsers
+    getUsers,
+    updateUser,
+    getUserById,
+    deleteUserById
 } = require("../controllers/userController");
 
 // routes
@@ -21,6 +24,9 @@ router.post("/user", registerNewUser);
 router.get("/user/profile", authCheck, getUserProfile);
 router.put("/user/profile", authCheck, updateUserProfile);
 router.get("/user", authCheck,admin, getUsers);
+router.get("/user/:id", authCheck,admin, getUserById);
+router.put("/user/:id", authCheck,admin, updateUser);
+router.delete("/user/:id", authCheck,admin, deleteUserById);
 
 
 module.exports = router;

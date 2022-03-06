@@ -100,3 +100,44 @@ exports.getUsers = expressAsyncHandler(async (req, res) => {
     res.json(users)
 
 })
+
+exports.getUserById = expressAsyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id).select('-password')
+    res.json(user)
+
+})
+
+exports.updateUser = expressAsyncHandler(async (req, res) => {
+
+    const user = await User.findById(req.params.id)
+
+    if (user) {
+        user.name = req.body.name || user.name
+        user.email = req.body.email || user.email
+        user.isAdmin = req.body.isAdmin || user.isAdmin
+        const updatedUser = await user.save()
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+        })
+    } else {
+        res.status(401)
+        throw new Error('User not found')
+    }
+
+})
+
+exports.deleteUserById = expressAsyncHandler(async (req, res) => {
+    const user = await User.findOneAndDelete(req.params.id).exec()
+
+    if(user){
+        res.json(user)
+    }else {
+        res.status(500)
+        throw new Error('DB error')
+    }
+
+})
+

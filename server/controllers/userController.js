@@ -95,3 +95,8 @@ exports.registerNewUser = expressAsyncHandler(async (req, res) => {
 
 })
 
+exports.getUsers = expressAsyncHandler(async (req, res) => {
+    const users = await User.find({})
+    res.json(users)
+
+})

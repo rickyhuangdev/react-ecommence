@@ -14,6 +14,10 @@ app.use(express.json())
 app.use(morgan("dev"))
 app.use(bodyParser.json({limit: "5mb"}))
 app.use(cors())
+app.get('/api/config/paypal',(req,res)=>{
+    res.send(process.env.PAYPAL_CLIENT_ID)
+})
+
 readdirSync("./routes").map((r) => app.use("/api", require("./routes/" + r)));
 app.use((req, res, next) => {
     const error = new Error(`Not Found - ${req.OriginalUrl}`)

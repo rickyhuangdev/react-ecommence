@@ -38,10 +38,17 @@ exports.getOrderDetail = expressAsyncHandler(async (req, res) => {
     try {
         const order = await Order.findById(req.params.orderId).populate('products.product', "_id title price totalAfterDiscount images slug").exec()
         if (order) {
+            let finalAmount = 0
+            const {cartTotal, totalAfterDiscount} = order
+            if (totalAfterDiscount) {
+                finalAmount = totalAfterDiscount
+            } else {
+                finalAmount = cartTotal
+            }
+            order.finalAmount = finalAmount
             if (order.orderedBy.toString() === req.user._id.toString()) {
                 return res.json({
-                    success: true,
-                    data: order
+                    success: true, data: order
                 })
             } else {
                 res.status(401)
@@ -61,7 +68,6 @@ exports.getOrderDetail = expressAsyncHandler(async (req, res) => {
 })
 exports.updateOrderToPaid = expressAsyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.orderId)
-    const result = await Cart.findByIdAndUpdate(req.params.orderId).exec();
    if(order){
        order.isPaid = true
        order.paidAt = Date.now()
@@ -73,12 +79,17 @@ exports.updateOrderToPaid = expressAsyncHandler(async (req, res) => {
        }
        const updatedOrder = await order.save()
        res.json(updatedOrder)
-   }else{
+   } else {
        res.status(404)
        throw  new Error('No Order Found')
    }
 
 
+})
 
+
+exports.getMyOrders = expressAsyncHandler(async (req, res) => {
+    const orders = await Order.find({orderedBy: req.user._id})
+    res.json(orders)
 })
 

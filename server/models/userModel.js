@@ -22,11 +22,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        default: 'subscriber'
-    },
-    cart: {
-        type: Array,
-        default: []
+        default: 'user'
     },
     address: [
         {
@@ -44,6 +40,10 @@ const userSchema = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
+    },
+    state: {
+        type: Number,
+        default: 1
     }
     // wishList: [
     //     {

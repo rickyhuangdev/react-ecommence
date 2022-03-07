@@ -13,7 +13,13 @@ mongoose.connect(process.env.MONGO_URI, {}).then(() => console.log("DB connected
 app.use(express.json())
 app.use(morgan("dev"))
 app.use(bodyParser.json({limit: "5mb"}))
-app.use(cors())
+const cosOption = {
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+}
+app.use(cors(cosOption))
 app.get('/api/config/paypal',(req,res)=>{
     res.send(process.env.PAYPAL_CLIENT_ID)
 })

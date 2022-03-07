@@ -6,7 +6,7 @@ const Coupon = require("../models/coupon");
 const expressAsyncHandler = require("express-async-handler");
 
 exports.create = expressAsyncHandler(async (req, res) => {
-    const {country,email,phone,firstName,lastName,companyName,postCode,address} = req.body.address
+    const {country,email,phone,firstName,lastName,companyName,postCode,address,paymentMethod} = req.body
     const user = await User.findById(req.user._id).exec()
     const {cartTotal, totalAfterDiscount, products, orderedBy} = await Cart.findOne({orderedBy: user._id}).exec();
     let newOrder = await new Order({
@@ -14,6 +14,7 @@ exports.create = expressAsyncHandler(async (req, res) => {
         totalAfterDiscount,
         products,
         orderedBy,
+        paymentMethod,
         address:{
             country,
             email,
@@ -45,15 +46,15 @@ exports.getOrderDetail = expressAsyncHandler(async (req, res) => {
             } else {
                 finalAmount = cartTotal
             }
-            order.finalAmount = finalAmount
-            if (order.orderedBy.toString() === req.user._id.toString()) {
-                return res.json({
-                    success: true, data: order
-                })
-            } else {
-                res.status(401)
-                throw  new Error('Unauthorized Access')
-            }
+            res.json({
+                success: true, data: order
+            })
+            // if (order.orderedBy.toString() === req.user._id.toString()) {
+            //
+            // } else {
+            //     res.status(401)
+            //     throw  new Error('Unauthorized Access')
+            // }
 
         } else {
             res.status(404)
@@ -93,3 +94,17 @@ exports.getMyOrders = expressAsyncHandler(async (req, res) => {
     res.json(orders)
 })
 
+exports.updateOrderToDelivered = expressAsyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.orderId)
+    if(order){
+        order.isDelivered = true
+        order.DeliveredAt = Date.now()
+        const updatedOrder = await order.save()
+        res.json(updatedOrder)
+    } else {
+        res.status(404)
+        throw  new Error('No Order Found')
+    }
+
+
+})

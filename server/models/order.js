@@ -37,6 +37,16 @@ const orderSchema = new Schema({
     paymentResult:{
 
     },
+    isDelivered:{
+        type:Boolean,
+        default:false
+    },
+    DeliveredAt:{
+        type:Date,
+    },
+    paymentMethod:{
+        type:String
+    },
     orderStatus:{
         type:Number,
         default:0

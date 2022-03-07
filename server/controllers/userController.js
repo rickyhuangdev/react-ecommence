@@ -20,6 +20,7 @@ exports.authUser = expressAsyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+            image: user.picture,
             token: generateToken(user._id)
         })
     } else {
@@ -37,6 +38,7 @@ exports.getUserProfile = expressAsyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
+            image: user.picture,
         })
     } else {
         res.status(401)

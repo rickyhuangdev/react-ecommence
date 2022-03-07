@@ -49,19 +49,16 @@ exports.applyCoupon = async (req, res) => {
 
     const validCoupon = await Coupon.findOne({name: coupon}).exec()
     if (validCoupon === null) {
-        return res.json({
-            success: false,
-            message: "Invalid coupon"
-        })
+        res.status(404)
+        throw  new Error('No Coupon Found')
     }
-    const user = await User.findOne({email: req.user.email}).exec()
+    const user = await User.findById(req.user._id)
     let {
         products,
         cartTotal
-    } = await Cart.findOne({orderedBy: user._id}).populate('products.product', "_id title price")
-    console.log(validCoupon)
+    } = await Cart.findOne({user_id: user._id}).populate('products.product', "_id title price")
     let totalAfterDiscount = (cartTotal - (cartTotal * validCoupon.discount) / 100).toFixed(2)
-   await Cart.findOneAndUpdate({orderedBy: user._id}, {totalAfterDiscount:totalAfterDiscount}, {new: true}).exec()
+   await Cart.findOneAndUpdate({user_id: user._id}, {totalAfterDiscount:totalAfterDiscount}, {new: true}).exec()
     return res.json({
         success: true,
         message: "successfully Applied",

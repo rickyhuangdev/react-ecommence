@@ -7,8 +7,8 @@ exports.userCart = async (req, res) => {
 
     const {cart} = req.body
     let products = []
-    const user = await User.findOne(({email: req.user.email})).exec()
-    let cartExistByUser = await Cart.findOne({orderBy: user._id}).exec()
+    const user = await User.findById(req.user._id)
+    let cartExistByUser = await Cart.findOne({user_id: user._id}).exec()
     if (cartExistByUser) {
         cartExistByUser.remove()
         console.log('removed cart')
@@ -29,17 +29,22 @@ exports.userCart = async (req, res) => {
     let newCart = await new Cart({
         products,
         cartTotal,
-        orderedBy: user._id
+        user_id: user._id
     }).save()
     if (newCart) {
         res.json({
             success: true
         })
+    }else{
+        res.json({
+            success: false
+        })
     }
+
 }
 exports.getUserCart = async (req, res) => {
-    const user = await User.findOne(({email: req.user.email})).exec()
-    let carts = await Cart.findOne(({orderedBy: user._id})).populate('products.product', "_id title price totalAfterDiscount").exec()
+    const user = await User.findById(req.user._id)
+    let carts = await Cart.findOne(({user_id: user._id})).populate('products.product', "_id title price totalAfterDiscount").exec()
     const {products, cartTotal, totalAfterDiscount} = carts
     if (carts) {
         res.json({products, cartTotal, totalAfterDiscount})
@@ -48,8 +53,7 @@ exports.getUserCart = async (req, res) => {
     }
 }
 exports.clearCart = async (req, res) => {
-    const user = await User.findOne(({email: req.user.email})).exec()
-    let result = await Cart.deleteOne({orderedBy: user._id}).exec()
+    let result = await Cart.findOneAndRemove({user_id: req.user._id}).exec()
     if (result) {
         res.json({
             success: true

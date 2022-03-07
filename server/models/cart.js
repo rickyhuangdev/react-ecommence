@@ -16,7 +16,7 @@ const cartSchema = new Schema({
     ],
     cartTotal: Number,
     totalAfterDiscount: Number,
-    orderedBy: {
+    user_id: {
         type: Schema.ObjectId,
         ref: "User"
     }

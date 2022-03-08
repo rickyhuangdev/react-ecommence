@@ -199,7 +199,7 @@ exports.productSearch = expressAsyncHandler(async (req, res) => {
         await handleCategory(req, res, category)
     }
     if (stars) {
-        await handleCategory(req, res, category)
+        await handleStar(req, res, category)
     }
 });
 

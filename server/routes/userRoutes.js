@@ -14,7 +14,10 @@ const {
     getUsers,
     updateUser,
     getUserById,
-    deleteUserById
+    deleteUserById,
+    addToWishlist,
+    wishlish,
+    removeWishlish
 } = require("../controllers/userController");
 
 // routes
@@ -27,6 +30,9 @@ router.get("/user", authCheck,admin, getUsers);
 router.get("/user/:id", authCheck,admin, getUserById);
 router.put("/user/:id", authCheck,admin, updateUser);
 router.delete("/user/:id", authCheck,admin, deleteUserById);
+router.post("/user/wishlish", authCheck, addToWishlist);
+router.get("/user/wishlish", authCheck, wishlish);
+router.put("/user/:id/wishlish", authCheck,admin, removeWishlish);
 
 
 module.exports = router;

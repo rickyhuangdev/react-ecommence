@@ -44,13 +44,13 @@ const userSchema = new mongoose.Schema({
     state: {
         type: Number,
         default: 1
-    }
-    // wishList: [
-    //     {
-    //         type: ObjectId,
-    //         ref: "Product"
-    //     }
-    // ]
+    },
+    wishList: [
+        {
+            type: ObjectId,
+            ref: "Product"
+        }
+    ]
 }, {timestamps: true})
 
 userSchema.pre('save', async function (next) {

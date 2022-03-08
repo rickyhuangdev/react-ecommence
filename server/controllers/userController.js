@@ -109,6 +109,28 @@ exports.getUserById = expressAsyncHandler(async (req, res) => {
 
 })
 
+exports.wishlish = expressAsyncHandler(async (req, res) => {
+    const list = await User.findById(req.user._id).select('wishList').populate('wishList').exec()
+    res.json(list)
+
+})
+exports.addToWishlist = expressAsyncHandler(async (req, res) => {
+    const {productId} = req.body
+    const user = await User.findByIdAndUpdate({_id:req.user._id},{$addToSet:{wishList:productId}},{new:true}).exec()
+    res.json({
+        success:true
+    })
+
+})
+exports.removeWishlish = expressAsyncHandler(async (req, res) => {
+    const {id} = req.params
+    const user = await User.findByIdAndUpdate({_id:req.user._id},{$pull:{wishList:id}},{new:true}).exec()
+    res.json({
+        success:true
+    })
+
+})
+
 exports.updateUser = expressAsyncHandler(async (req, res) => {
 
     const user = await User.findById(req.params.id)

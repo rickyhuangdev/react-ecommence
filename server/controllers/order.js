@@ -73,12 +73,24 @@ exports.updateOrderToPaid = expressAsyncHandler(async (req, res) => {
        order.isPaid = true
        order.paidAt = Date.now()
        order.paymentResult = {
-           id:req.body.id,
-           status:req.body.status,
-           update_time:req.body.update_time,
-           email_address:req.body.payer.email_address
+           id: req.body.id,
+           status: req.body.status,
+           update_time: req.body.update_time,
+           email_address: req.body.payer.email_address
        }
        const updatedOrder = await order.save()
+       const {products} = order
+       let bulkOption = products.map((item) => {
+           return {
+               updateOne: {
+                   filter: {_id: item.product._id},
+                   update: {
+                       $inc: {quantity: -item.count, sold: +item.count}
+                   }
+               }
+           }
+       })
+       let updated = await Product.bulkWrite(bulkOption,{})
        res.json(updatedOrder)
    } else {
        res.status(404)

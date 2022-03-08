@@ -28,7 +28,7 @@ exports.userCart = async (req, res) => {
     }
     let newCart = await new Cart({
         products,
-        cartTotal,
+        cartTotal:cartTotal.toFixed(2),
         user_id: user._id
     }).save()
     if (newCart) {
@@ -45,18 +45,22 @@ exports.userCart = async (req, res) => {
 exports.getUserCart = async (req, res) => {
     const user = await User.findById(req.user._id)
     let carts = await Cart.findOne(({user_id: user._id})).populate('products.product', "_id title price totalAfterDiscount").exec()
-    const {products, cartTotal, totalAfterDiscount} = carts
     if (carts) {
+        const {products, cartTotal, totalAfterDiscount} = carts
         res.json({products, cartTotal, totalAfterDiscount})
     }else{
         res.json([])
     }
 }
 exports.clearCart = async (req, res) => {
-    let result = await Cart.findOneAndRemove({user_id: req.user._id}).exec()
+    let result = await Cart.deleteMany({user_id: req.user._id}).exec()
     if (result) {
         res.json({
             success: true
+        })
+    } else {
+        res.json({
+            success: false
         })
     }
 }

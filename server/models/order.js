@@ -25,6 +25,13 @@ const orderSchema = new Schema({
         type: Schema.ObjectId,
         ref: "User"
     },
+    coupons:[
+        {
+            coupon_id: String,
+            name:String,
+            discount:String
+        }
+    ],
     address: {
         country: String,
         email: String,

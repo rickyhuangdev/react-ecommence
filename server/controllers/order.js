@@ -13,7 +13,7 @@ exports.create = expressAsyncHandler(async (req, res) => {
         cartTotal,
         totalAfterDiscount,
         products,
-        orderedBy,
+        user_id,
         paymentMethod,
         address:{
             country,

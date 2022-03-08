@@ -14,6 +14,13 @@ const cartSchema = new Schema({
             price: Number
         }
     ],
+    coupons:[
+        {
+            coupon_id: String,
+            name:String,
+            discount:String
+        }
+    ],
     cartTotal: Number,
     totalAfterDiscount: Number,
     user_id: {

@@ -112,8 +112,8 @@ exports.listRelated = async (req, res) => {
 };
 const handleQuery = expressAsyncHandler(async (req, res, query) => {
     const products = await ProductModel.find({$text: {$search: query}})
-        .populate('category', '_id name')
-        .populate('sub', '_id name').exec()
+        .populate('category', '_id name').exec()
+    console.log(products)
     if (products) {
         res.json(
             products

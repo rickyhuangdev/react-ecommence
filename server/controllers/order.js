@@ -13,7 +13,7 @@ exports.create = expressAsyncHandler(async (req, res) => {
         cartTotal,
         totalAfterDiscount,
         products,
-        user_id,
+        user_id:user._id,
         paymentMethod,
         address:{
             country,
@@ -90,7 +90,7 @@ exports.updateOrderToPaid = expressAsyncHandler(async (req, res) => {
 
 
 exports.getMyOrders = expressAsyncHandler(async (req, res) => {
-    const orders = await Order.find({orderedBy: req.user._id})
+    const orders = await Order.find({user_id: req.user._id})
     res.json(orders)
 })
 

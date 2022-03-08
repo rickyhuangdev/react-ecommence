@@ -57,6 +57,10 @@ const orderSchema = new Schema({
     orderStatus:{
         type:Number,
         default:0
+    },
+    user_id: {
+        type: Schema.ObjectId,
+        ref: "User"
     }
 }, {timestamps: true})
 

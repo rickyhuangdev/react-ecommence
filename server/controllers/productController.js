@@ -110,4 +110,25 @@ exports.listRelated = async (req, res) => {
 
     res.json(related);
 };
+const handleQuery = expressAsyncHandler(async (req, res, query) => {
+    const products = await ProductModel.find({$text: {$search: query}})
+        .populate('category', '_id name')
+        .populate('sub', '_id name').exec()
+    if (products) {
+        res.json(
+            products
+        )
+    } else {
+        res.json(400)
+        throw new Error("No Search Result Found")
+    }
+
+
+})
+exports.productSearch = expressAsyncHandler(async (req, res) => {
+    const {query} = req.body
+    if (query) {
+        await handleQuery(req, res, query)
+    }
+});
 

@@ -16,7 +16,6 @@ exports.list = expressAsyncHandler(async (req, res) =>
     res.json(await ProductModel.find({}).sort({createdAt: -1}).exec()));
 
 exports.listAll = expressAsyncHandler(async (req, res) => {
-    console.log(123)
     const products = await ProductModel.find({}).limit(parseInt(req.params.count)).populate('category').populate('subs').sort([['createdAt', "desc"]]).exec()
     res.json(products);
 });
@@ -157,8 +156,39 @@ const handleCategory = expressAsyncHandler(async (req, res, category) => {
 
 
 })
+const handleStar = expressAsyncHandler((req, res, stars) => {
+    ProductModel.aggregate(([
+        {
+            $project: {
+                document: "$$ROOT",
+                floorAverage: {
+                    $floor: {$avg: "$ratings.star"},
+                }
+            }
+        },
+        {
+            $match: {floorAverage: stars}
+        }
+    ])).limit(15).exec((err, arg) => {
+        if (err) console.log(err)
+        ProductModel.find({_id: arg}).populate('category', '_id name').exec((err, products) => {
+            if (err) console.log(err)
+            if (products) {
+                res.json(
+                    products
+                )
+            } else {
+                res.json(400)
+                throw new Error("No Search Result Found")
+            }
+        })
+    })
+
+
+})
 exports.productSearch = expressAsyncHandler(async (req, res) => {
-    const {query, price,category} = req.body
+    const {query, price, category, stars} = req.body
+    console.log(query)
     if (query) {
         await handleQuery(req, res, query)
     }
@@ -166,7 +196,10 @@ exports.productSearch = expressAsyncHandler(async (req, res) => {
         await handlePrice(req, res, price)
     }
     if (category) {
-        await handleCategory(req, res, price)
+        await handleCategory(req, res, category)
+    }
+    if (stars) {
+        await handleCategory(req, res, category)
     }
 });
 

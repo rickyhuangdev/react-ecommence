@@ -132,7 +132,20 @@ const handlePrice = expressAsyncHandler(async (req, res, price) => {
                 $gte:price[0],
                 $lte:price[1]
         }}).populate('category', '_id name').exec()
-    console.log(products)
+    if (products) {
+        res.json(
+            products
+        )
+    } else {
+        res.json(400)
+        throw new Error("No Search Result Found")
+    }
+
+
+})
+const handleCategory = expressAsyncHandler(async (req, res, category) => {
+    const products = await ProductModel.find(
+        {category}).populate('category', '_id name').exec()
     if (products) {
         res.json(
             products
@@ -145,12 +158,15 @@ const handlePrice = expressAsyncHandler(async (req, res, price) => {
 
 })
 exports.productSearch = expressAsyncHandler(async (req, res) => {
-    const {query, price} = req.body
+    const {query, price,category} = req.body
     if (query) {
         await handleQuery(req, res, query)
     }
     if (price !== undefined) {
         await handlePrice(req, res, price)
+    }
+    if (category) {
+        await handleCategory(req, res, price)
     }
 });
 

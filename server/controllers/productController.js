@@ -125,10 +125,32 @@ const handleQuery = expressAsyncHandler(async (req, res, query) => {
 
 
 })
+const handlePrice = expressAsyncHandler(async (req, res, price) => {
+    const products = await ProductModel.find(
+        {
+            price:{
+                $gte:price[0],
+                $lte:price[1]
+        }}).populate('category', '_id name').exec()
+    console.log(products)
+    if (products) {
+        res.json(
+            products
+        )
+    } else {
+        res.json(400)
+        throw new Error("No Search Result Found")
+    }
+
+
+})
 exports.productSearch = expressAsyncHandler(async (req, res) => {
-    const {query} = req.body
+    const {query, price} = req.body
     if (query) {
         await handleQuery(req, res, query)
+    }
+    if (price !== undefined) {
+        await handlePrice(req, res, price)
     }
 });
 

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // middlewares
-const { authCheck, adminCheck } = require("../middlewares/authMiddleware");
+const { authCheck, admin } = require("../middlewares/authMiddleware");
 
 // controller
 const {
@@ -18,12 +18,12 @@ const {
 } = require("../controllers/productController");
 
 // routes
-router.post("/product", authCheck, adminCheck, create);
+router.post("/product", authCheck, admin, create);
 router.route("/products/:count").get(listAll);
 router.get("/product/:slug", getProductById);
 // router.get("/category/:slug", read);
-router.put("/product/:slug", authCheck, adminCheck, update);
-router.delete("/product/:slug", authCheck, adminCheck, remove);
+router.put("/product/:slug", authCheck, admin, update);
+router.delete("/product/:slug", authCheck, admin, remove);
 router.post("/products", list);
 router.put('/product/star/:productId',authCheck,productStar)
 router.get('/product/related/:productId',listRelated)

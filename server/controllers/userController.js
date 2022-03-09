@@ -111,13 +111,24 @@ exports.getUserById = expressAsyncHandler(async (req, res) => {
 })
 
 exports.getWishlists = expressAsyncHandler(async (req, res) => {
-    console.log(123)
-    return
-    const list = await User.findOne({_id: req.user._id})
-        .select("wishlist")
-        .populate("wishlist.product")
-        .exec();
-    res.json(list)
+    const result = await Wishlist.aggregate([
+        {
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "products"
+            }
+        },
+
+        {
+            $match: {"user_id": req.user._id}
+        }
+    ]).exec((err, result) => {
+        if (err) throw new Error(err)
+        res.json(result[0])
+    })
+
 
 })
 exports.addToWishlist = expressAsyncHandler(async (req, res) => {
@@ -144,10 +155,16 @@ exports.addToWishlist = expressAsyncHandler(async (req, res) => {
 })
 exports.removeWishlist = expressAsyncHandler(async (req, res) => {
     const {id} = req.params
-    const user = await User.findByIdAndUpdate({_id: req.user._id}, {$pull: {wishList: id}}, {new: true}).exec()
-    res.json({
-        success: true
-    })
+    const removed = await Wishlist.findOneAndDelete({product_id: id, user_id: req.user._id}).exec()
+    if (removed) {
+        res.json({
+            success: true
+        })
+    } else {
+        res.status(403)
+        throw new Error("Delete Failed")
+    }
+
 
 })
 

@@ -21,6 +21,8 @@ const {
 } = require("../controllers/userController");
 
 // routes
+router.get("/user/wishlists",authCheck, getWishlists);
+router.delete("/user/:id/wishlist", authCheck, removeWishlist);
 router.post("/user/address", authCheck, saveAddress);
 router.post("/login", authUser);
 router.post("/user", registerNewUser);
@@ -32,8 +34,7 @@ router.put("/user/:id", authCheck,admin, updateUser);
 router.delete("/user/:id", authCheck,admin, deleteUserById);
 
 router.post("/user/wishlist", authCheck, addToWishlist);
-router.get("/user/wishlists", authCheck, getWishlists);
-router.put("/user/:id/wishlist", authCheck, removeWishlist);
+
 
 
 module.exports = router;

@@ -45,12 +45,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 1
     },
-    wishList: [
-        {
-            type: ObjectId,
-            ref: "Product"
-        }
-    ]
+    // wishlist: [{ type: ObjectId, ref: "Product" }],
 }, {timestamps: true})
 
 userSchema.pre('save', async function (next) {

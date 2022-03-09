@@ -16,8 +16,8 @@ const {
     getUserById,
     deleteUserById,
     addToWishlist,
-    wishlish,
-    removeWishlish
+    getWishlists,
+    removeWishlist
 } = require("../controllers/userController");
 
 // routes
@@ -30,9 +30,10 @@ router.get("/user", authCheck,admin, getUsers);
 router.get("/user/:id", authCheck,admin, getUserById);
 router.put("/user/:id", authCheck,admin, updateUser);
 router.delete("/user/:id", authCheck,admin, deleteUserById);
-router.post("/user/wishlish", authCheck, addToWishlist);
-router.get("/user/wishlish", authCheck, wishlish);
-router.put("/user/:id/wishlish", authCheck,admin, removeWishlish);
+
+router.post("/user/wishlist", authCheck, addToWishlist);
+router.get("/user/wishlists", authCheck, getWishlists);
+router.put("/user/:id/wishlist", authCheck, removeWishlist);
 
 
 module.exports = router;

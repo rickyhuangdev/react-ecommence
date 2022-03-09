@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const expressAsyncHandler = require("express-async-handler");
-const generateToken  = require("../utils/generateToken")
+const generateToken = require("../utils/generateToken")
+const Wishlist = require('../models/wishlist')
 exports.saveAddress = async (req, res) => {
     const userAddress = await User.findOneAndUpdate({email: req.user.email}, {address: req.body.address}).exec()
     if (userAddress) {
@@ -109,24 +110,43 @@ exports.getUserById = expressAsyncHandler(async (req, res) => {
 
 })
 
-exports.wishlish = expressAsyncHandler(async (req, res) => {
-    const list = await User.findById(req.user._id).select('wishList').populate('wishList').exec()
+exports.getWishlists = expressAsyncHandler(async (req, res) => {
+    console.log(123)
+    return
+    const list = await User.findOne({_id: req.user._id})
+        .select("wishlist")
+        .populate("wishlist.product")
+        .exec();
     res.json(list)
 
 })
 exports.addToWishlist = expressAsyncHandler(async (req, res) => {
-    const {productId} = req.body
-    const user = await User.findByIdAndUpdate({_id:req.user._id},{$addToSet:{wishList:productId}},{new:true}).exec()
-    res.json({
-        success:true
-    })
+    const {productId} = req.body;
+    const isExistWishlist = await Wishlist.findOne({product_id: productId, user_id: req.user._id}).exec()
+    if (isExistWishlist) {
+        res.status(403)
+        throw new Error("Already in your wishlist")
+    } else {
+        const newWishlist = await new Wishlist({
+            product_id: productId,
+            user_id: req.user._id
+        }).save()
+        if (newWishlist) {
+            res.json({ok: true});
+        } else {
+            res.status(403)
+            throw new Error("Fail to add  in your wishlist")
+        }
+
+    }
+
 
 })
-exports.removeWishlish = expressAsyncHandler(async (req, res) => {
+exports.removeWishlist = expressAsyncHandler(async (req, res) => {
     const {id} = req.params
-    const user = await User.findByIdAndUpdate({_id:req.user._id},{$pull:{wishList:id}},{new:true}).exec()
+    const user = await User.findByIdAndUpdate({_id: req.user._id}, {$pull: {wishList: id}}, {new: true}).exec()
     res.json({
-        success:true
+        success: true
     })
 
 })

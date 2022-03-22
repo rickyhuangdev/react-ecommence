@@ -126,7 +126,7 @@ exports.getWishlists = expressAsyncHandler(async (req, res) => {
         }
     ]).exec((err, result) => {
         if (err) throw new Error(err)
-        res.json(result[0])
+        res.json(result)
     })
 
 
